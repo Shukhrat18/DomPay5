@@ -872,7 +872,7 @@
             }
             
             try {
-                const contract = await getContractById(parseInt(selectedValue));
+                const contract = await getContractById(selectedValue);
                 if (contract) {
                     currentContract = contract;
                     tempPayments = [];
@@ -1252,7 +1252,7 @@
             }
             
             try {
-                await deleteContractFromDB(parseInt(selectedValue));
+                await deleteContractFromDB(selectedValue);
                 alert('Шартнома нест карда шуд!');
                 
                 currentContract = null;
