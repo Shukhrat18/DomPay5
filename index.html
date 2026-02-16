@@ -1,0 +1,754 @@
+<!DOCTYPE html>
+<html lang="tg">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DomPay Online - Идоракунии шартномаҳо</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        :root {
+            --primary: #2563eb;
+            --primary-dark: #1e40af;
+            --success: #10b981;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+            --bg: #f8fafc;
+            --card: #ffffff;
+            --text: #1e293b;
+            --text-light: #64748b;
+            --border: #e2e8f0;
+        }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        header {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+            padding: 30px;
+            border-radius: 12px;
+            margin-bottom: 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 16px;
+        }
+        
+        h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+        
+        .sync-status {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 16px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 8px;
+            font-size: 0.9rem;
+        }
+        
+        .card {
+            background: var(--card);
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 24px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+        
+        .card-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 20px;
+        }
+        
+        .form-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+            margin-bottom: 16px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 6px;
+            font-weight: 500;
+            font-size: 0.9rem;
+        }
+        
+        input, select {
+            width: 100%;
+            padding: 10px 14px;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            font-size: 0.95rem;
+            font-family: inherit;
+        }
+        
+        input:focus, select:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(37,99,235,0.1);
+        }
+        
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+        
+        .btn-primary { background: var(--primary); color: white; }
+        .btn-success { background: var(--success); color: white; }
+        .btn-warning { background: var(--warning); color: white; }
+        .btn-danger { background: var(--danger); color: white; }
+        
+        .btn-group {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin-top: 20px;
+        }
+        
+        .result-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+        }
+        
+        .result-item {
+            background: var(--bg);
+            padding: 16px;
+            border-radius: 8px;
+        }
+        
+        .result-label {
+            font-size: 0.85rem;
+            color: var(--text-light);
+            margin-bottom: 6px;
+        }
+        
+        .result-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary);
+        }
+        
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+        }
+        
+        @media (max-width: 768px) {
+            .container { padding: 12px; }
+            h1 { font-size: 1.5rem; }
+            .form-row { grid-template-columns: 1fr; }
+            .btn-group { flex-direction: column; }
+            .btn { width: 100%; justify-content: center; }
+            .grid-2 { grid-template-columns: 1fr; }
+        }
+        
+        .alert {
+            padding: 16px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+        
+        .alert-info {
+            background: #dbeafe;
+            color: #1e40af;
+            border: 1px solid #93c5fd;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div>
+                <h1>🏠 DomPay Online</h1>
+                <div>Идоракунии шартномаҳои хариди хона бо синхрони онлайн</div>
+            </div>
+            <div class="sync-status" id="syncStatus">
+                <span id="syncIcon">🔄</span>
+                <span id="syncText">Боргирӣ...</span>
+            </div>
+        </header>
+
+        <!-- ШАРТНОМА -->
+        <div class="card">
+            <div class="card-title">📝 Шартнома</div>
+            
+            <div class="form-row">
+                <div>
+                    <label>Ному насаби харидор</label>
+                    <input type="text" id="buyerName" placeholder="Ному насаб">
+                </div>
+                <div>
+                    <label>Телефон</label>
+                    <input type="tel" id="buyerPhone" placeholder="+992 XX XXX XXXX">
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div>
+                    <label>Номи шартнома</label>
+                    <input type="text" id="contractName" placeholder="Масалан: Хонаи №5">
+                </div>
+                <div>
+                    <label>№ шартнома</label>
+                    <input type="text" id="contractNo" placeholder="001/2026">
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div>
+                    <label>Санаи шартнома</label>
+                    <input type="date" id="contractDate">
+                </div>
+                <div>
+                    <label>Санаи оғоз</label>
+                    <input type="date" id="startDate">
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div>
+                    <label>Нархи хона (сомонӣ)</label>
+                    <input type="number" id="housePrice" placeholder="500000">
+                </div>
+                <div>
+                    <label>Пешпардохт (%)</label>
+                    <input type="number" id="initialPercent" placeholder="50" min="0" max="100">
+                </div>
+                <div>
+                    <label>Моҳҳои қарз</label>
+                    <input type="number" id="monthsCount" placeholder="24">
+                </div>
+            </div>
+
+            <div class="btn-group">
+                <button class="btn btn-primary" onclick="appCalculate()">🧮 ҲИСОБ КУН</button>
+                <button class="btn btn-success" onclick="appSaveContract()">💾 Сабт ҳамчун нав</button>
+                <button class="btn btn-warning" onclick="appUpdateContract()">✏️ Навсозӣ</button>
+            </div>
+        </div>
+
+        <!-- БАЗА ВА НАТИҶАҲО -->
+        <div class="grid-2">
+            <div class="card">
+                <div class="card-title">📂 База / Шартномаҳо</div>
+                
+                <div style="position: relative; margin-bottom: 16px;">
+                    <input type="text" id="searchInput" placeholder="🔍 Ҷустуҷӯ..." onkeyup="appFilterContracts()" style="padding-left: 40px;">
+                </div>
+                
+                <select id="contractsList" size="10" style="width: 100%; height: 300px; margin-bottom: 16px;" onchange="appSelectContract()">
+                    <option value="all">👥 ҲАМАИ МИЗОҶОН</option>
+                </select>
+                
+                <div class="btn-group">
+                    <button class="btn btn-primary" onclick="appLoadContract()">📥 Боркунӣ</button>
+                    <button class="btn btn-danger" onclick="appDeleteContract()">🗑️ Нест кардан</button>
+                </div>
+
+                <div id="allClientsStats" style="display:none; margin-top: 20px;">
+                    <div class="alert alert-info">
+                        <strong>Оморӣ барои ҳамаи мизоҷон:</strong>
+                        <div style="margin-top: 10px;">
+                            <div>Ҷамъ нархи хонаҳо: <strong id="totalHousePrice">0</strong> сомонӣ</div>
+                            <div>Ҷамъ супорида: <strong id="totalPaid">0</strong> сомонӣ</div>
+                            <div>Ҷамъ боқимонда: <strong id="totalRemaining">0</strong> сомонӣ</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-title">📊 Натиҷаҳо</div>
+                <div class="result-grid">
+                    <div class="result-item">
+                        <div class="result-label">Нархи хона</div>
+                        <div class="result-value" id="resultHousePrice">0</div>
+                    </div>
+                    <div class="result-item">
+                        <div class="result-label">Пешпардохт талаб</div>
+                        <div class="result-value" id="resultInitialNeed">0</div>
+                    </div>
+                    <div class="result-item">
+                        <div class="result-label">Пешпардохт супорида</div>
+                        <div class="result-value" id="resultInitialPaid">0</div>
+                    </div>
+                    <div class="result-item">
+                        <div class="result-label">Боқимондаи умумӣ</div>
+                        <div class="result-value" id="resultOverallRemain">0</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ПАРДОХТ -->
+        <div class="card">
+            <div class="card-title">💰 Пардохт</div>
+            <div class="form-row">
+                <div>
+                    <label>Маблағи пардохт (сомонӣ)</label>
+                    <input type="number" id="paymentAmount" placeholder="10000">
+                </div>
+                <div>
+                    <label>Санаи пардохт</label>
+                    <input type="date" id="paymentDate">
+                </div>
+            </div>
+            <button class="btn btn-success" onclick="appAddPayment()">✅ СУПОРДАМ</button>
+        </div>
+    </div>
+
+    <!-- Supabase SDK -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    
+    <script>
+        // ⚠️ ДИГАР КУНЕД: Гузоштани URL ва KEY-и Supabase
+        const SUPABASE_URL = 'https://csqdvbiiuhagegtagztg.supabase.co';
+        const SUPABASE_ANON_KEY = 'sb_publishable__TSYV3L6XYK5VQ2c_4Xepg_4xedbvef';
+        
+        // Global variables
+        let supabaseClient = null;
+        let currentContract = null;
+        let tempPayments = [];
+        
+        // Update sync status
+        function updateSyncStatus(status, text) {
+            const icon = document.getElementById('syncIcon');
+            const textEl = document.getElementById('syncText');
+            
+            if (status === 'online') {
+                icon.textContent = '✅';
+                textEl.textContent = text;
+            } else if (status === 'offline') {
+                icon.textContent = '❌';
+                textEl.textContent = text;
+            } else {
+                icon.textContent = '🔄';
+                textEl.textContent = text;
+            }
+        }
+        
+        // Initialize Supabase
+        function initSupabase() {
+            try {
+                if (SUPABASE_URL === 'YOUR_SUPABASE_URL_HERE' || SUPABASE_ANON_KEY === 'YOUR_SUPABASE_ANON_KEY_HERE') {
+                    updateSyncStatus('offline', 'URL ва KEY гузоштан лозим');
+                    console.warn('⚠️ Лутфан SUPABASE_URL ва SUPABASE_ANON_KEY-ро дар коди HTML гузоред!');
+                    return false;
+                }
+                
+                if (typeof window.supabase === 'undefined') {
+                    updateSyncStatus('offline', 'Supabase SDK бор нашуд');
+                    console.error('Supabase SDK бор нашуд');
+                    return false;
+                }
+                
+                supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+                updateSyncStatus('online', 'Онлайн - пайваст');
+                return true;
+            } catch (error) {
+                console.error('Хатогӣ дар оғози Supabase:', error);
+                updateSyncStatus('offline', 'Хатогӣ: ' + error.message);
+                return false;
+            }
+        }
+        
+        // Get all contracts
+        async function getAllContracts() {
+            if (!supabaseClient) return [];
+            
+            try {
+                const { data, error } = await supabaseClient
+                    .from('contracts')
+                    .select('*')
+                    .order('created_at', { ascending: false });
+                
+                if (error) throw error;
+                return data || [];
+            } catch (error) {
+                console.error('Хатогӣ дар гирифтани шартномаҳо:', error);
+                alert('Хатогӣ: ' + error.message);
+                return [];
+            }
+        }
+        
+        // Load contracts list
+        async function loadContractsList() {
+            try {
+                const contracts = await getAllContracts();
+                const select = document.getElementById('contractsList');
+                select.innerHTML = '<option value="all">👥 ҲАМАИ МИЗОҶОН</option>';
+                
+                contracts.forEach(contract => {
+                    const option = document.createElement('option');
+                    option.value = contract.id;
+                    option.textContent = `${contract.buyer_name || ''} | ${contract.contract_no || ''} | ${contract.contract_name || ''}`;
+                    select.appendChild(option);
+                });
+            } catch (error) {
+                console.error('Хатогӣ дар бор кардани рӯйхат:', error);
+            }
+        }
+        
+        // Filter contracts
+        function appFilterContracts() {
+            const searchText = document.getElementById('searchInput').value.toLowerCase();
+            const select = document.getElementById('contractsList');
+            const options = select.options;
+            
+            for (let i = 1; i < options.length; i++) {
+                const text = options[i].textContent.toLowerCase();
+                options[i].style.display = text.includes(searchText) ? '' : 'none';
+            }
+        }
+        
+        // Select contract
+        function appSelectContract() {
+            const select = document.getElementById('contractsList');
+            if (select.value === 'all') {
+                showAllClientsStats();
+            } else {
+                document.getElementById('allClientsStats').style.display = 'none';
+            }
+        }
+        
+        // Show all clients stats
+        async function showAllClientsStats() {
+            try {
+                const contracts = await getAllContracts();
+                let totalHouse = 0;
+                let totalPaid = 0;
+                
+                contracts.forEach(contract => {
+                    totalHouse += parseFloat(contract.house_price) || 0;
+                    const payments = contract.payments || [];
+                    const paid = payments.reduce((sum, p) => sum + (parseFloat(p.amount) || 0), 0);
+                    totalPaid += paid;
+                });
+                
+                document.getElementById('totalHousePrice').textContent = formatNumber(totalHouse);
+                document.getElementById('totalPaid').textContent = formatNumber(totalPaid);
+                document.getElementById('totalRemaining').textContent = formatNumber(totalHouse - totalPaid);
+                document.getElementById('allClientsStats').style.display = 'block';
+            } catch (error) {
+                console.error('Хатогӣ:', error);
+            }
+        }
+        
+        // Calculate
+        function appCalculate() {
+            try {
+                const housePrice = parseFloat(document.getElementById('housePrice').value) || 0;
+                const initialPercent = parseFloat(document.getElementById('initialPercent').value) || 0;
+                const monthsCount = parseInt(document.getElementById('monthsCount').value) || 0;
+                
+                if (housePrice <= 0 || monthsCount <= 0) {
+                    alert('Лутфan нархи хона ва моҳҳоро дохил кунед');
+                    return;
+                }
+                
+                const initialNeed = housePrice * initialPercent / 100;
+                
+                let payments = currentContract && currentContract.payments ? currentContract.payments : tempPayments;
+                const totalPaid = payments.reduce((sum, p) => sum + (parseFloat(p.amount) || 0), 0);
+                const overallRemain = housePrice - totalPaid;
+                const initialPaid = totalPaid;
+                
+                document.getElementById('resultHousePrice').textContent = formatNumber(housePrice);
+                document.getElementById('resultInitialNeed').textContent = formatNumber(initialNeed) + ` (${initialPercent}%)`;
+                document.getElementById('resultInitialPaid').textContent = formatNumber(initialPaid);
+                document.getElementById('resultOverallRemain').textContent = formatNumber(overallRemain);
+            } catch (error) {
+                console.error('Хатогӣ дар ҳисоб:', error);
+                alert('Хатогӣ: ' + error.message);
+            }
+        }
+        
+        // Save contract
+        async function appSaveContract() {
+            if (!supabaseClient) {
+                alert('Supabase пайваст нашудааст! Лутфан URL ва KEY-ро санҷед.');
+                return;
+            }
+            
+            try {
+                const contractNo = document.getElementById('contractNo').value;
+                if (!contractNo) {
+                    alert('Лутфан № шартномаро дохил кунед');
+                    return;
+                }
+                
+                const contract = {
+                    buyer_name: document.getElementById('buyerName').value,
+                    buyer_phone: document.getElementById('buyerPhone').value,
+                    contract_name: document.getElementById('contractName').value,
+                    contract_no: contractNo,
+                    contract_date: document.getElementById('contractDate').value,
+                    start_date: document.getElementById('startDate').value,
+                    house_price: parseFloat(document.getElementById('housePrice').value) || 0,
+                    initial_percent: parseFloat(document.getElementById('initialPercent').value) || 0,
+                    months_count: parseInt(document.getElementById('monthsCount').value) || 0,
+                    payments: tempPayments,
+                    created_at: new Date().toISOString()
+                };
+                
+                const { data, error } = await supabaseClient
+                    .from('contracts')
+                    .insert([contract])
+                    .select()
+                    .single();
+                
+                if (error) throw error;
+                
+                alert('✅ Шартнома бомуваффақият сабт шуд!');
+                tempPayments = [];
+                await loadContractsList();
+                clearForm();
+            } catch (error) {
+                console.error('Хатогӣ дар сабт:', error);
+                alert('Хатогӣ: ' + error.message);
+            }
+        }
+        
+        // Load contract
+        async function appLoadContract() {
+            if (!supabaseClient) return;
+            
+            const select = document.getElementById('contractsList');
+            const selectedValue = select.value;
+            
+            if (selectedValue === 'all') {
+                alert('Лутфан шартномаи мушаххасро интихоб кунед');
+                return;
+            }
+            
+            try {
+                const { data, error } = await supabaseClient
+                    .from('contracts')
+                    .select('*')
+                    .eq('id', selectedValue)
+                    .single();
+                
+                if (error) throw error;
+                
+                currentContract = data;
+                tempPayments = [];
+                
+                document.getElementById('buyerName').value = data.buyer_name || '';
+                document.getElementById('buyerPhone').value = data.buyer_phone || '';
+                document.getElementById('contractName').value = data.contract_name || '';
+                document.getElementById('contractNo').value = data.contract_no || '';
+                document.getElementById('contractDate').value = data.contract_date || '';
+                document.getElementById('startDate').value = data.start_date || '';
+                document.getElementById('housePrice').value = data.house_price || '';
+                document.getElementById('initialPercent').value = data.initial_percent || '';
+                document.getElementById('monthsCount').value = data.months_count || '';
+                
+                appCalculate();
+            } catch (error) {
+                console.error('Хатогӣ:', error);
+                alert('Хатогӣ: ' + error.message);
+            }
+        }
+        
+        // Update contract
+        async function appUpdateContract() {
+            if (!supabaseClient || !currentContract) {
+                alert('Лутфан аввал шартномаро бор кунед');
+                return;
+            }
+            
+            try {
+                const updatedData = {
+                    buyer_name: document.getElementById('buyerName').value,
+                    buyer_phone: document.getElementById('buyerPhone').value,
+                    contract_name: document.getElementById('contractName').value,
+                    contract_no: document.getElementById('contractNo').value,
+                    contract_date: document.getElementById('contractDate').value,
+                    start_date: document.getElementById('startDate').value,
+                    house_price: parseFloat(document.getElementById('housePrice').value) || 0,
+                    initial_percent: parseFloat(document.getElementById('initialPercent').value) || 0,
+                    months_count: parseInt(document.getElementById('monthsCount').value) || 0,
+                    updated_at: new Date().toISOString()
+                };
+                
+                const { error } = await supabaseClient
+                    .from('contracts')
+                    .update(updatedData)
+                    .eq('id', currentContract.id);
+                
+                if (error) throw error;
+                
+                alert('✅ Шартнома навсозӣ шуд!');
+                await loadContractsList();
+            } catch (error) {
+                console.error('Хатогӣ:', error);
+                alert('Хатогӣ: ' + error.message);
+            }
+        }
+        
+        // Delete contract
+        async function appDeleteContract() {
+            if (!supabaseClient) return;
+            
+            const select = document.getElementById('contractsList');
+            const selectedValue = select.value;
+            
+            if (selectedValue === 'all') {
+                alert('Лутфан шартномаро интихоб кунед');
+                return;
+            }
+            
+            if (!confirm('Шумо мутмаин ҳастед?')) return;
+            
+            try {
+                const { error } = await supabaseClient
+                    .from('contracts')
+                    .delete()
+                    .eq('id', selectedValue);
+                
+                if (error) throw error;
+                
+                alert('✅ Шартнома нест карда шуд');
+                currentContract = null;
+                tempPayments = [];
+                await loadContractsList();
+                clearForm();
+            } catch (error) {
+                console.error('Хатогӣ:', error);
+                alert('Хатогӣ: ' + error.message);
+            }
+        }
+        
+        // Add payment
+        async function appAddPayment() {
+            try {
+                const amount = parseFloat(document.getElementById('paymentAmount').value);
+                const date = document.getElementById('paymentDate').value;
+                
+                if (!amount || amount <= 0) {
+                    alert('Лутфан маблағро дохил кунед');
+                    return;
+                }
+                
+                if (!date) {
+                    alert('Лутфан санаро интихоб кунед');
+                    return;
+                }
+                
+                const payment = {
+                    amount: amount,
+                    date: date,
+                    timestamp: new Date().toISOString()
+                };
+                
+                if (currentContract && currentContract.id && supabaseClient) {
+                    if (!currentContract.payments) currentContract.payments = [];
+                    currentContract.payments.push(payment);
+                    
+                    const { error } = await supabaseClient
+                        .from('contracts')
+                        .update({ payments: currentContract.payments })
+                        .eq('id', currentContract.id);
+                    
+                    if (error) throw error;
+                    alert('✅ Пардохт сабт шуд!');
+                } else {
+                    tempPayments.push(payment);
+                    alert('Пардохт илова шуд. "Сабт ҳамчун нав"-ро пахш кунед.');
+                }
+                
+                document.getElementById('paymentAmount').value = '';
+                document.getElementById('paymentDate').value = '';
+                appCalculate();
+            } catch (error) {
+                console.error('Хатогӣ:', error);
+                alert('Хатогӣ: ' + error.message);
+            }
+        }
+        
+        // Clear form
+        function clearForm() {
+            document.getElementById('buyerName').value = '';
+            document.getElementById('buyerPhone').value = '';
+            document.getElementById('contractName').value = '';
+            document.getElementById('contractNo').value = '';
+            document.getElementById('contractDate').value = '';
+            document.getElementById('startDate').value = '';
+            document.getElementById('housePrice').value = '';
+            document.getElementById('initialPercent').value = '';
+            document.getElementById('monthsCount').value = '';
+            document.getElementById('paymentAmount').value = '';
+            document.getElementById('paymentDate').value = '';
+            
+            document.getElementById('resultHousePrice').textContent = '0';
+            document.getElementById('resultInitialNeed').textContent = '0';
+            document.getElementById('resultInitialPaid').textContent = '0';
+            document.getElementById('resultOverallRemain').textContent = '0';
+        }
+        
+        // Format number
+        function formatNumber(num) {
+            return new Intl.NumberFormat('tg-TJ').format(num);
+        }
+        
+        // Initialize app
+        async function init() {
+            try {
+                const supabaseReady = initSupabase();
+                
+                if (supabaseReady) {
+                    await loadContractsList();
+                }
+                
+                const today = new Date().toISOString().split('T')[0];
+                document.getElementById('paymentDate').value = today;
+                document.getElementById('contractDate').value = today;
+                document.getElementById('startDate').value = today;
+            } catch (error) {
+                console.error('Хатогӣ дар оғоз:', error);
+            }
+        }
+        
+        // Start app when page loads
+        window.addEventListener('DOMContentLoaded', init);
+    </script>
+</body>
+</html>
